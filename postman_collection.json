@@ -1,0 +1,415 @@
+{
+  "info": {
+    "name": "Mini Clinic Information System API",
+    "description": "REST API collection for the Mini Clinic Information System take-home test.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:5000/api" },
+    { "key": "token", "value": "" },
+    { "key": "patient_id", "value": "" },
+    { "key": "registration_id", "value": "" },
+    { "key": "queue_id", "value": "" },
+    { "key": "medical_record_id", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json().data;",
+                  "  pm.collectionVariables.set('token', data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/login",
+              "host": ["{{base_url}}"],
+              "path": ["login"]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/logout",
+              "host": ["{{base_url}}"],
+              "path": ["logout"]
+            }
+          }
+        },
+        {
+          "name": "Me (current user)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": ["{{base_url}}"],
+              "path": ["me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "Get All Patients",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/patients?page=1&limit=10&search=",
+              "host": ["{{base_url}}"],
+              "path": ["patients"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Patient By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/patients/{{patient_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "{{patient_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Patient",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json().data;",
+                  "  pm.collectionVariables.set('patient_id', data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nik\": \"3201010101010001\",\n  \"name\": \"Ahmad Fauzi\",\n  \"gender\": \"L\",\n  \"birth_date\": \"1990-05-10\",\n  \"phone\": \"081234567890\",\n  \"address\": \"Jl. Merdeka No. 1, Bandung\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/patients",
+              "host": ["{{base_url}}"],
+              "path": ["patients"]
+            }
+          }
+        },
+        {
+          "name": "Update Patient",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nik\": \"3201010101010001\",\n  \"name\": \"Ahmad Fauzi Update\",\n  \"gender\": \"L\",\n  \"birth_date\": \"1990-05-10\",\n  \"phone\": \"081234567891\",\n  \"address\": \"Jl. Merdeka No. 2, Bandung\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/patients/{{patient_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "{{patient_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Patient",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{base_url}}/patients/{{patient_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["patients", "{{patient_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Master Data",
+      "item": [
+        {
+          "name": "Get Polis",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/master/polis",
+              "host": ["{{base_url}}"],
+              "path": ["master", "polis"]
+            }
+          }
+        },
+        {
+          "name": "Get Doctors",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/master/doctors",
+              "host": ["{{base_url}}"],
+              "path": ["master", "doctors"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Registrations",
+      "item": [
+        {
+          "name": "Get Registrations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/registrations?date=&status=",
+              "host": ["{{base_url}}"],
+              "path": ["registrations"],
+              "query": [
+                { "key": "date", "value": "" },
+                { "key": "status", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Registration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json().data;",
+                  "  pm.collectionVariables.set('registration_id', data.registration.id);",
+                  "  pm.collectionVariables.set('queue_id', data.queue.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patient_id\": {{patient_id}},\n  \"doctor_id\": 1,\n  \"poli_id\": 1,\n  \"visit_date\": \"\",\n  \"payment_type\": \"Umum\",\n  \"initial_complaint\": \"Demam dan batuk\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/registrations",
+              "host": ["{{base_url}}"],
+              "path": ["registrations"]
+            }
+          }
+        },
+        {
+          "name": "Update Registration Status",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Check In\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/registrations/{{registration_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["registrations", "{{registration_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Queues",
+      "item": [
+        {
+          "name": "Get Queues (Today)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/queues?date=&poli_id=&status=",
+              "host": ["{{base_url}}"],
+              "path": ["queues"],
+              "query": [
+                { "key": "date", "value": "" },
+                { "key": "poli_id", "value": "" },
+                { "key": "status", "value": "" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Queue (manual)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registration_id\": {{registration_id}},\n  \"poli_id\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/queues",
+              "host": ["{{base_url}}"],
+              "path": ["queues"]
+            }
+          }
+        },
+        {
+          "name": "Call Next Queue",
+          "request": {
+            "method": "PUT",
+            "url": {
+              "raw": "{{base_url}}/queues/{{queue_id}}/call",
+              "host": ["{{base_url}}"],
+              "path": ["queues", "{{queue_id}}", "call"]
+            }
+          }
+        },
+        {
+          "name": "Update Queue Status",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Selesai\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/queues/{{queue_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["queues", "{{queue_id}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Medical Records",
+      "item": [
+        {
+          "name": "Create Medical Record (SOAP)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const data = pm.response.json().data;",
+                  "  pm.collectionVariables.set('medical_record_id', data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"registration_id\": {{registration_id}},\n  \"complaint\": \"Demam sejak 2 hari, batuk kering\",\n  \"blood_pressure\": \"120/80\",\n  \"temperature\": 38.2,\n  \"weight\": 60,\n  \"height\": 165,\n  \"diagnosis\": \"ISPA (Infeksi Saluran Pernapasan Akut)\",\n  \"therapy_plan\": \"Istirahat cukup, minum obat teratur, kontrol jika belum membaik dalam 3 hari\",\n  \"actions\": [\n    { \"action_name\": \"Pengukuran tanda vital\", \"notes\": \"Dilakukan sebelum pemeriksaan\" }\n  ],\n  \"prescriptions\": [\n    { \"medicine_name\": \"Paracetamol 500mg\", \"dosage\": \"3x1\", \"quantity\": \"10 tablet\", \"instructions\": \"Diminum setelah makan\" }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/medical-records",
+              "host": ["{{base_url}}"],
+              "path": ["medical-records"]
+            }
+          }
+        },
+        {
+          "name": "Get Medical Records By Patient",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/medical-records/{{patient_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["medical-records", "{{patient_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prescriptions",
+      "item": [
+        {
+          "name": "Create Prescription",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medical_record_id\": {{medical_record_id}},\n  \"medicine_name\": \"Amoxicillin 500mg\",\n  \"dosage\": \"3x1\",\n  \"quantity\": \"15 kapsul\",\n  \"instructions\": \"Habiskan sesuai anjuran dokter\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/prescriptions",
+              "host": ["{{base_url}}"],
+              "path": ["prescriptions"]
+            }
+          }
+        },
+        {
+          "name": "Get Prescriptions By Medical Record",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/prescriptions/{{medical_record_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["prescriptions", "{{medical_record_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/dashboard",
+              "host": ["{{base_url}}"],
+              "path": ["dashboard"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
